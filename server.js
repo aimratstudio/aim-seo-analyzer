@@ -6,6 +6,19 @@ const cors = require('cors');
 
 const app = express();
 app.use(cors());
+
+const path = require('path');
+
+// Servir archivos estáticos
+app.use(express.static(path.join(__dirname)));
+
+// Ruta raíz que sirve el index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
+});
+
+
+
 app.use(express.json());
 
 app.get('/analyze', async (req, res) => {

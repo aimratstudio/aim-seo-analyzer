@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AIM SEO & AIO Analyzer | Quick Health Check</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .analyzer-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input[type="url"] {
+            flex: 1;
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="url"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .results {
+            display: none;
+        }
+
+        .results.active {
+            display: block;
+        }
+
+        .score-card {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-left: 5px solid #667eea;
+        }
+
+        .score-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.5em;
+        }
+
+        .score-display {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .score-circle {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: conic-gradient(#667eea var(--score), #e0e0e0 var(--score));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .score-value {
+            position: relative;
+            z-index: 1;
+            font-size: 2em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .score-label {
+            font-size: 1.2em;
+            color: #666;
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .metric {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .metric-value {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .check-list {
+            list-style: none;
+            margin-top: 15px;
+        }
+
+        .check-list li {
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .check-list li::before {
+            content: '✓';
+            color: #4caf50;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .check-list li.fail::before {
+            content: '✗';
+            color: #f44336;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .cta-section h2 {
+            font-size: 2em;
+            margin-bottom: 15px;
+        }
+
+        .cta-section p {
+            font-size: 1.2em;
+            margin-bottom: 25px;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 15px 40px;
+            background: white;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: transform 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: white;
+            opacity: 0.8;
+        }
+
+        @media (max-width: 768px) {
+            .input-group {
+                flex-direction: column;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .analyzer-box {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 AIM SEO & AIO Analyzer</h1>
+            <p>Descubre si tu web está lista para ser citada por las Inteligencias Artificiales</p>
+        </header>
+
+        <div class="analyzer-box">
+            <div class="input-group">
+                <input type="url" id="urlInput" placeholder="https://tuweb.com" required>
+                <button id="analyzeBtn" onclick="analyze()">Analizar</button>
+            </div>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>Analizando tu sitio... Esto puede tomar unos segundos</p>
+            </div>
+
+            <div class="results" id="results">
+                <div class="score-card">
+                    <h3>📊 Score Total AIM</h3>
+                    <div class="score-display">
+                        <div class="score-circle" id="totalScoreCircle">
+                            <div class="score-value" id="totalScore">0</div>
+                        </div>
+                        <div class="score-label">
+                            <strong>Preparación general de tu sitio</strong><br>
+                            <span id="totalScoreText">Calculando...</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="score-card">
+                    <h3>⚡ Rendimiento Técnico</h3>
+                    <div class="score-display">
+                        <div class="score-circle" id="techScoreCircle">
+                            <div class="score-value" id="techScore">0</div>
+                        </div>
+                        <div class="score-label">
+                            <strong>Velocidad y Core Web Vitals</strong><br>
+                            <span id="techScoreText">Analizando...</span>
+                        </div>
+                    </div>
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-label">First Contentful Paint</div>
+                            <div class="metric-value" id="fcp">-</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Largest Contentful Paint</div>
+                            <div class="metric-value" id="lcp">-</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Cumulative Layout Shift</div>
+                            <div class="metric-value" id="cls">-</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="score-card">
+                    <h3>🔍 SEO Básico</h3>
+                    <div class="score-display">
+                        <div class="score-circle" id="seoScoreCircle">
+                            <div class="score-value" id="seoScore">0</div>
+                        </div>
+                        <div class="score-label">
+                            <strong>Fundamentos de optimización</strong><br>
+                            <span id="seoScoreText">Revisando...</span>
+                        </div>
+                    </div>
+                    <ul class="check-list" id="seoChecks"></ul>
+                </div>
+
+                <div class="score-card">
+                    <h3>🤖 Preparación para IA (AIO)</h3>
+                    <div class="score-display">
+                        <div class="score-circle" id="aioScoreCircle">
+                            <div class="score-value" id="aioScore">0</div>
+                        </div>
+                        <div class="score-label">
+                            <strong>Listo para ser citado por IAs</strong><br>
+                            <span id="aioScoreText">Evaluando...</span>
+                        </div>
+                    </div>
+                    <ul class="check-list" id="aioChecks"></ul>
+                </div>
+
+                <div class="cta-section">
+                    <h2>¿Quieres mejorar tu score AIO?</h2>
+                    <p>En AIM estructuramos tu contenido pilar para que Google y las IAs te recomienden, y lo convertimos en contenido visual para tus redes.</p>
+                    <a href="https://aim.cl/contacto" class="cta-button">Agenda una auditoría estratégica</a>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>© 2026 AIM Agencia de Comunicaciones SpA | Concepción, Chile</p>
+        </footer>
+    </div>
+
+    <script>
+        async function analyze() {
+            const url = document.getElementById('urlInput').value;
+            if (!url) {
+                alert('Por favor ingresa una URL válida');
+                return;
+            }
+
+            const btn = document.getElementById('analyzeBtn');
+            const loading = document.getElementById('loading');
+            const results = document.getElementById('results');
+
+            btn.disabled = true;
+            loading.classList.add('active');
+            results.classList.remove('active');
+
+            try {
+                const response = await fetch(`/analyze?url=${encodeURIComponent(url)}`);
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                displayResults(data);
+            } catch (error) {
+                alert('Error al analizar: ' + error.message);
+            } finally {
+                btn.disabled = false;
+                loading.classList.remove('active');
+            }
+        }
+
+        function displayResults(data) {
+            const results = document.getElementById('results');
+            results.classList.add('active');
+
+            // Score total
+            updateScore('totalScore', 'totalScoreCircle', data.scores.total);
+            document.getElementById('totalScoreText').textContent = getScoreText(data.scores.total);
+
+            // Score técnico
+            updateScore('techScore', 'techScoreCircle', data.scores.technical);
+            document.getElementById('techScoreText').textContent = getScoreText(data.scores.technical);
+            document.getElementById('fcp').textContent = data.pagespeed.fcp;
+            document.getElementById('lcp').textContent = data.pagespeed.lcp;
+            document.getElementById('cls').textContent = data.pagespeed.cls;
+
+            // Score SEO
+            updateScore('seoScore', 'seoScoreCircle', data.scores.seo);
+            document.getElementById('seoScoreText').textContent = getScoreText(data.scores.seo);
+            displaySeoChecks(data.seo);
+
+            // Score AIO
+            updateScore('aioScore', 'aioScoreCircle', data.scores.aio);
+            document.getElementById('aioScoreText').textContent = getScoreText(data.scores.aio);
+            displayAioChecks(data.seo);
+        }
+
+        function updateScore(valueId, circleId, score) {
+            document.getElementById(valueId).textContent = score;
+            document.getElementById(circleId).style.setProperty('--score', `${score * 3.6}deg`);
+        }
+
+        function getScoreText(score) {
+            if (score >= 80) return '¡Excelente!';
+            if (score >= 60) return 'Bueno, pero mejorable';
+            if (score >= 40) return 'Necesita trabajo';
+            return 'Requiere atención urgente';
+        }
+
+        function displaySeoChecks(seo) {
+            const checks = document.getElementById('seoChecks');
+            checks.innerHTML = '';
+
+            const items = [
+                { label: `Title: ${seo.title || 'No detectado'}`, pass: !!seo.title },
+                { label: `Meta Description: ${seo.metaDescription ? 'Presente' : 'Falta'}`, pass: !!seo.metaDescription },
+                { label: `H1 único: ${seo.h1Count === 1 ? 'Sí' : 'No'}`, pass: seo.h1Count === 1 },
+                { label: `Open Graph: ${seo.hasOpenGraph ? 'Configurado' : 'Falta'}`, pass: seo.hasOpenGraph },
+                { label: `Imágenes sin alt: ${seo.imagesWithoutAlt}`, pass: seo.imagesWithoutAlt === 0 }
+            ];
+
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.label;
+                if (!item.pass) li.classList.add('fail');
+                checks.appendChild(li);
+            });
+        }
+
+        function displayAioChecks(seo) {
+            const checks = document.getElementById('aioChecks');
+            checks.innerHTML = '';
+
+            const items = [
+                { label: `Schema Markup: ${seo.hasSchema ? 'Presente' : 'Falta'}`, pass: seo.hasSchema },
+                { label: `Blog/Noticias: ${seo.hasBlog ? 'Activo' : 'No detectado'}`, pass: seo.hasBlog },
+                { label: `FAQ: ${seo.hasFAQ ? 'Presente' : 'Falta'}`, pass: seo.hasFAQ },
+                { label: `Estructura H2: ${seo.h2Count >= 3 ? 'Buena' : 'Insuficiente'}`, pass: seo.h2Count >= 3 }
+            ];
+
+            items.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item.label;
+                if (!item.pass) li.classList.add('fail');
+                checks.appendChild(li);
+            });
+        }
+
+        // Permitir analizar con Enter
+        document.getElementById('urlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') analyze();
+        });
+    </script>
+</body>
+</html>
