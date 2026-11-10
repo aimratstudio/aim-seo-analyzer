@@ -3,87 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AIM SEO Analyzer | Quick Health Check</title>
+    <title>AIM SEO Analyzer</title>
     <style>
-        /* 1. RESET Y BASE */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            background-color: #f7fafc;
-            color: #1a202c;
-            line-height: 1.5;
+            background: linear-gradient(180deg, #f7fafc 0%, #edf2f7 100%);
             min-height: 100vh;
+            color: #1a202c;
         }
 
         .container {
             max-width: 900px;
             margin: 0 auto;
-            padding: 2rem 1.5rem;
+            padding: 60px 20px;
         }
 
-        /* 2. HERO SECTION */
-        .hero-section {
-            background: linear-gradient(135deg, #4a5568, #718096);
-            border-radius: 14px;
-            padding: 3rem 2rem;
+        header {
             text-align: center;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+            margin-bottom: 40px;
         }
 
-        .hero-title {
+        header h1 {
             font-size: 2.5rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 0.5rem;
+            font-weight: 800;
+            color: #2d3748;
+            margin-bottom: 15px;
         }
 
-        .hero-highlight {
-            color: #EEC400;
-        }
+        header h1 span { color: #EEC400; }
 
-        .hero-separator {
-            width: 60px;
-            height: 3px;
-            background: #EEC400;
-            margin: 1rem auto;
-            border-radius: 2px;
-        }
-
-        .hero-subtitle {
-            font-size: 1.1rem;
-            color: #e2e8f0;
+        header p {
+            font-size: 1.25rem;
+            color: #718096;
             max-width: 600px;
             margin: 0 auto;
         }
 
-        /* 3. ANALYZER BOX (CARD PRINCIPAL) */
         .analyzer-box {
             background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            padding: 2rem 1.5rem;
-            margin-bottom: 2rem;
+            border-radius: 16px;
+            padding: 40px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+            border-top: 4px solid #EEC400;
+            margin-bottom: 30px;
         }
 
-        .input-group {
-            margin-bottom: 1.5rem;
-        }
+        .input-group { margin-bottom: 10px; }
 
         input[type="url"] {
             width: 100%;
-            padding: 0.9rem 1.2rem;
+            padding: 18px 24px;
             border: 2px solid #e2e8f0;
-            border-radius: 8px;
-            font-size: 1rem;
+            border-radius: 12px;
+            font-size: 16px;
             color: #1a202c;
-            transition: border-color 0.2s, box-shadow 0.2s;
-            margin-bottom: 1rem;
+            transition: all 0.3s;
+            margin-bottom: 8px;
+            font-family: monospace; /* Para que se vea más como una URL real */
         }
 
         input[type="url"]:focus {
@@ -92,43 +70,62 @@
             box-shadow: 0 0 0 3px rgba(238, 196, 0, 0.15);
         }
 
-        /* 4. BOTONES */
+        .input-hint {
+            font-size: 0.85rem;
+            color: #718096;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* BOTÓN REDONDO CON EFECTO PULSE (Estilo Ookla) */
         .btn-primary {
             width: 100%;
-            padding: 0.9rem 1.6rem;
+            padding: 18px 32px;
             background: #EEC400;
             color: #1a202c;
             border: none;
-            border-radius: 8px;
-            font-size: 1rem;
-            font-weight: 700;
+            border-radius: 50px; /* Totalmente redondo */
+            font-size: 1.1rem;
+            font-weight: 800;
             cursor: pointer;
             transition: transform 0.2s, background 0.2s;
+            animation: pulse-yellow 2s infinite;
+            letter-spacing: 0.5px;
         }
 
         .btn-primary:hover {
             background: #ecc94b;
             transform: translateY(-2px);
+            animation: none; /* Detiene el pulso al hacer hover para que se sienta sólido */
         }
 
         .btn-primary:disabled {
             opacity: 0.6;
             cursor: not-allowed;
             transform: none;
+            animation: none;
         }
 
-        /* 5. ESCALA DE PUNTUACIÓN */
+        @keyframes pulse-yellow {
+            0% { box-shadow: 0 0 0 0 rgba(238, 196, 0, 0.7); }
+            70% { box-shadow: 0 0 0 15px rgba(238, 196, 0, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(238, 196, 0, 0); }
+        }
+
+        /* ESCALA DE PUNTUACIÓN (TONOS PASTEL) */
         .score-scale {
-            margin-top: 2rem;
-            padding-top: 1.5rem;
-            border-top: 1px solid #e2e8f0;
+            margin-top: 35px;
+            padding-top: 30px;
+            border-top: 2px solid #e2e8f0;
         }
 
         .scale-title {
             font-size: 0.9rem;
             color: #718096;
             text-align: center;
-            margin-bottom: 1rem;
+            margin-bottom: 20px;
             font-weight: 600;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -136,10 +133,11 @@
 
         .scale-bar {
             display: flex;
-            height: 10px;
-            border-radius: 5px;
+            height: 12px;
+            border-radius: 6px;
             overflow: hidden;
-            margin-bottom: 1rem;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .scale-segment {
@@ -147,15 +145,16 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.7rem;
+            font-size: 0.75rem;
             font-weight: 700;
-            color: #ffffff;
+            color: #1a202c; /* Texto oscuro para mejor contraste en pastel */
         }
 
-        .segment-critical { background: #e53e3e; }
-        .segment-needs-work { background: #dd6b20; }
-        .segment-good { background: #EEC400; color: #1a202c; }
-        .segment-excellent { background: #48bb78; }
+        /* Colores pastel desaturados */
+        .segment-critical { background: #fc8181; }      /* Rojo pastel */
+        .segment-needs-work { background: #f6ad55; }    /* Naranja pastel */
+        .segment-good { background: #f6e05e; }          /* Amarillo pastel */
+        .segment-excellent { background: #68d391; }     /* Verde pastel */
 
         .scale-labels {
             display: flex;
@@ -167,39 +166,37 @@
         .label-item {
             text-align: center;
             flex: 1;
-            padding: 0 0.5rem;
+            padding: 0 5px;
         }
 
         .label-value {
             font-weight: 700;
             color: #1a202c;
-            margin-bottom: 0.25rem;
+            margin-bottom: 3px;
         }
 
         .label-text {
             font-size: 0.75rem;
+            color: #718096;
             line-height: 1.3;
         }
 
-        /* 6. LOADING */
         .loading {
             text-align: center;
-            padding: 2rem;
+            padding: 40px;
             display: none;
         }
 
-        .loading.active {
-            display: block;
-        }
+        .loading.active { display: block; }
 
         .spinner {
-            border: 4px solid #e2e8f0;
+            border: 4px solid #f3f3f3;
             border-top: 4px solid #EEC400;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
+            margin: 0 auto 20px;
         }
 
         @keyframes spin {
@@ -207,15 +204,8 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* 7. RESULTADOS Y CARDS */
-        .results {
-            display: none;
-        }
-
-        .results.active {
-            display: block;
-            animation: fadeIn 0.4s ease-out;
-        }
+        .results { display: none; }
+        .results.active { display: block; animation: fadeIn 0.4s ease-out; }
 
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -223,31 +213,29 @@
         }
 
         .score-card {
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-            border-left: 4px solid #EEC400;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 20px;
+            border-left: 5px solid #EEC400;
         }
 
         .score-card h3 {
             color: #2d3748;
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-            font-weight: 700;
+            margin-bottom: 15px;
+            font-size: 1.4em;
         }
 
         .score-display {
             display: flex;
             align-items: center;
-            gap: 1.5rem;
-            margin-bottom: 1.5rem;
+            gap: 20px;
+            margin-bottom: 20px;
         }
 
         .score-circle {
-            width: 80px;
-            height: 80px;
+            width: 90px;
+            height: 90px;
             border-radius: 50%;
             background: conic-gradient(#EEC400 var(--score), #e2e8f0 var(--score));
             display: flex;
@@ -260,170 +248,142 @@
         .score-circle::before {
             content: '';
             position: absolute;
-            width: 64px;
-            height: 64px;
-            background: #ffffff;
+            width: 70px;
+            height: 70px;
+            background: white;
             border-radius: 50%;
         }
 
         .score-value {
             position: relative;
             z-index: 1;
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: #1a202c;
+            font-size: 1.8em;
+            font-weight: bold;
+            color: #2d3748;
         }
 
         .score-label {
-            font-size: 1rem;
+            font-size: 1.1em;
             color: #718096;
         }
 
         .metrics {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
         }
 
         .metric {
-            background: #f7fafc;
-            padding: 1rem;
-            border-radius: 8px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
         }
 
         .metric-label {
-            font-size: 0.85rem;
+            font-size: 0.85em;
             color: #718096;
-            margin-bottom: 0.25rem;
+            margin-bottom: 5px;
         }
 
         .metric-value {
-            font-size: 1.1rem;
-            font-weight: 700;
+            font-size: 1.2em;
+            font-weight: bold;
             color: #1a202c;
         }
 
-        /* 8. LISTA DE CHECKS */
-        .check-list {
-            list-style: none;
-        }
+        .check-list { list-style: none; margin-top: 15px; }
 
         .check-list li {
-            padding: 0.75rem 0;
+            padding: 10px;
+            margin-bottom: 10px;
+            background: white;
+            border-radius: 8px;
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            font-size: 0.95rem;
-            color: #1a202c;
-            border-bottom: 1px solid #f7fafc;
-        }
-
-        .check-list li:last-child {
-            border-bottom: none;
+            gap: 10px;
+            font-size: 0.95em;
         }
 
         .check-list li::before {
             content: '✓';
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 22px;
-            height: 22px;
-            background: #48bb78;
-            color: #ffffff;
-            border-radius: 50%;
-            font-size: 14px;
+            color: #68d391; /* Verde pastel para los checks */
             font-weight: bold;
-            flex-shrink: 0;
+            font-size: 1.2em;
         }
 
         .check-list li.fail::before {
             content: '✗';
-            background: #e53e3e;
+            color: #fc8181; /* Rojo pastel para fallos */
         }
 
-        /* 9. CTA SECTION (Bloque oscuro de impacto) */
         .cta-section {
-            background: #2d3748;
-            color: #ffffff;
-            padding: 2.5rem 2rem;
-            border-radius: 12px;
+            background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 15px;
             text-align: center;
-            margin-top: 2rem;
+            margin-top: 30px;
         }
 
         .cta-section h2 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
+            font-size: 1.8em;
+            margin-bottom: 15px;
         }
 
-        .cta-section h2 span {
-            color: #EEC400;
-        }
+        .cta-section h2 span { color: #EEC400; }
 
         .cta-section p {
-            font-size: 1rem;
-            color: #e2e8f0;
-            margin-bottom: 1.5rem;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
+            font-size: 1.1em;
+            margin-bottom: 25px;
+            opacity: 0.95;
         }
 
         .cta-button {
             display: inline-block;
-            padding: 0.9rem 2rem;
+            padding: 15px 35px;
             background: #EEC400;
             color: #1a202c;
             text-decoration: none;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 1rem;
-            transition: transform 0.2s, background 0.2s;
+            border-radius: 50px; /* También redondo para consistencia */
+            font-weight: bold;
+            font-size: 1.1em;
+            transition: transform 0.2s;
         }
 
-        .cta-button:hover {
-            background: #ecc94b;
-            transform: translateY(-2px);
-        }
+        .cta-button:hover { transform: scale(1.05); }
 
-        /* 10. FOOTER */
         footer {
             text-align: center;
-            padding: 2rem 1rem;
+            padding: 30px;
             color: #718096;
-            font-size: 0.9rem;
         }
 
-        /* 11. RESPONSIVE */
         @media (max-width: 768px) {
-            .hero-title { font-size: 1.8rem; }
-            .hero-subtitle { font-size: 1rem; }
+            header h1 { font-size: 1.8rem; }
+            .analyzer-box { padding: 25px; }
             .score-display { flex-direction: column; text-align: center; }
-            .scale-labels { flex-direction: column; gap: 1rem; }
-            .label-item { text-align: left; display: flex; gap: 0.75rem; align-items: flex-start; }
-            .label-value { min-width: 50px; }
+            .scale-labels { flex-direction: column; gap: 15px; }
+            .label-item { text-align: left; display: flex; gap: 10px; align-items: center; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- HERO SECTION -->
-        <div class="hero-section">
-            <h1 class="hero-title">AIM <span class="hero-highlight">SEO Analyzer</span></h1>
-            <div class="hero-separator"></div>
-            <p class="hero-subtitle">Haz un test de 30 segundos para saber qué tan bien rankeada está tu web en Google</p>
-        </div>
+        <header>
+            <h1>🚀 AIM <span>SEO Analyzer</span></h1>
+            <p>Haz un test de 30 segundos para saber qué tan bien rankeada está tu web en Google</p>
+        </header>
 
-        <!-- ANALYZER BOX -->
         <div class="analyzer-box">
             <div class="input-group">
-                <input type="url" id="urlInput" placeholder="https://tuweb.com" required>
-                <button id="analyzeBtn" class="btn-primary" onclick="analyze()">Analizar mi sitio web</button>
+                <!-- Pre-llenado con https:// y fuente monoespaciada para que se note -->
+                <input type="url" id="urlInput" value="https://" placeholder="https://tuweb.com" required>
+                <p class="input-hint">💡 Asegúrate de que la dirección comience con <strong>https://</strong> para un análisis correcto.</p>
+                <button id="analyzeBtn" class="btn-primary" onclick="analyze()">Iniciar Test</button>
             </div>
 
-            <!-- ESCALA DE PUNTUACIÓN -->
             <div class="score-scale">
                 <div class="scale-title">¿Qué significa tu puntuación?</div>
                 <div class="scale-bar">
@@ -452,13 +412,11 @@
                 </div>
             </div>
 
-            <!-- LOADING -->
             <div class="loading" id="loading">
                 <div class="spinner"></div>
                 <p style="color: #718096;">Analizando tu sitio... Esto puede tomar unos segundos</p>
             </div>
 
-            <!-- RESULTS -->
             <div class="results" id="results">
                 <div class="score-card">
                     <h3>📊 Score Total AIM</h3>
@@ -467,7 +425,7 @@
                             <div class="score-value" id="totalScore">0</div>
                         </div>
                         <div class="score-label">
-                            <strong style="color: #1a202c;">Salud general de tu sitio</strong><br>
+                            <strong>Salud general de tu sitio</strong><br>
                             <span id="totalScoreText">Calculando...</span>
                         </div>
                     </div>
@@ -480,7 +438,7 @@
                             <div class="score-value" id="techScore">0</div>
                         </div>
                         <div class="score-label">
-                            <strong style="color: #1a202c;">Velocidad y Core Web Vitals</strong><br>
+                            <strong>Velocidad y Core Web Vitals</strong><br>
                             <span id="techScoreText">Analizando...</span>
                         </div>
                     </div>
@@ -507,7 +465,7 @@
                             <div class="score-value" id="seoScore">0</div>
                         </div>
                         <div class="score-label">
-                            <strong style="color: #1a202c;">Fundamentos de optimización</strong><br>
+                            <strong>Fundamentos de optimización</strong><br>
                             <span id="seoScoreText">Revisando...</span>
                         </div>
                     </div>
@@ -521,14 +479,13 @@
                             <div class="score-value" id="aioScore">0</div>
                         </div>
                         <div class="score-label">
-                            <strong style="color: #1a202c;">Listo para ser citado por IAs</strong><br>
+                            <strong>Listo para ser citado por IAs</strong><br>
                             <span id="aioScoreText">Evaluando...</span>
                         </div>
                     </div>
                     <ul class="check-list" id="aioChecks"></ul>
                 </div>
 
-                <!-- CTA SECTION -->
                 <div class="cta-section">
                     <h2>¿Quieres mejorar tu <span>score</span>?</h2>
                     <p>En AIM estructuramos tu contenido pilar para que Google y las IAs te recomienden, y lo convertimos en contenido visual para tus redes.</p>
@@ -546,13 +503,15 @@
         async function analyze() {
             let url = document.getElementById('urlInput').value.trim();
             
-            if (!url) {
-                alert('Por favor ingresa una URL válida');
-                return;
-            }
-            
+            // Si el usuario borró el https:// por accidente, lo forzamos de nuevo
             if (!url.startsWith('http://') && !url.startsWith('https://')) {
                 url = 'https://' + url;
+                document.getElementById('urlInput').value = url;
+            }
+            
+            if (url === 'https://') {
+                alert('Por favor ingresa tu dominio después de https://');
+                return;
             }
             
             try {
@@ -561,8 +520,6 @@
                 alert('La URL no es válida. Ejemplo: https://tuweb.com');
                 return;
             }
-            
-            document.getElementById('urlInput').value = url;
 
             const btn = document.getElementById('analyzeBtn');
             const loading = document.getElementById('loading');
@@ -575,11 +532,7 @@
             try {
                 const response = await fetch(`/analyze?url=${encodeURIComponent(url)}`);
                 const data = await response.json();
-
-                if (data.error) {
-                    throw new Error(data.error);
-                }
-
+                if (data.error) { throw new Error(data.error); }
                 displayResults(data);
             } catch (error) {
                 alert('Error al analizar: ' + error.message);
@@ -592,24 +545,19 @@
         function displayResults(data) {
             const results = document.getElementById('results');
             results.classList.add('active');
-
             updateScore('totalScore', 'totalScoreCircle', data.scores.total);
             document.getElementById('totalScoreText').textContent = getScoreText(data.scores.total);
-
             updateScore('techScore', 'techScoreCircle', data.scores.technical);
             document.getElementById('techScoreText').textContent = getScoreText(data.scores.technical);
             document.getElementById('fcp').textContent = data.pagespeed.fcp;
             document.getElementById('lcp').textContent = data.pagespeed.lcp;
             document.getElementById('cls').textContent = data.pagespeed.cls;
-
             updateScore('seoScore', 'seoScoreCircle', data.scores.seo);
             document.getElementById('seoScoreText').textContent = getScoreText(data.scores.seo);
             displaySeoChecks(data.seo);
-
             updateScore('aioScore', 'aioScoreCircle', data.scores.aio);
             document.getElementById('aioScoreText').textContent = getScoreText(data.scores.aio);
             displayAioChecks(data.seo);
-            
             results.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
