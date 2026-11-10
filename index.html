@@ -10,7 +10,6 @@
 
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-            /* Fondo gris un 15% más oscuro para mejor contraste */
             background: linear-gradient(180deg, #edf2f7 0%, #cbd5e0 100%);
             min-height: 100vh;
             color: #1a202c;
@@ -57,16 +56,14 @@
             margin-bottom: 24px;
         }
 
-        .input-group {
-            margin-bottom: 8px;
-        }
+        .input-group { margin-bottom: 8px; }
 
         input[type="url"] {
             width: 100%;
             padding: 16px 20px;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
-            font-size: 16px; /* Previene zoom en iOS */
+            font-size: 16px;
             color: #1a202c;
             font-family: 'Courier New', Courier, monospace;
             transition: all 0.3s;
@@ -81,7 +78,7 @@
         .input-hint {
             font-size: 0.85rem;
             color: #718096;
-            text-align: center; /* Centrado perfecto */
+            text-align: center;
             margin: 8px 0 16px 0;
             line-height: 1.4;
         }
@@ -119,7 +116,7 @@
             width: 32px;
             height: 32px;
             fill: #1a202c;
-            margin-left: 2px; /* Ajuste óptico para el ícono */
+            margin-left: 2px;
         }
 
         @keyframes pulse-yellow {
@@ -164,7 +161,6 @@
             color: #1a202c;
         }
 
-        /* Colores pastel desaturados */
         .segment-critical { background: #fc8181; }
         .segment-needs-work { background: #f6ad55; }
         .segment-good { background: #f6e05e; }
@@ -219,10 +215,7 @@
         }
 
         /* 7. RESULTADOS */
-        .results {
-            display: none;
-        }
-
+        .results { display: none; }
         .results.active {
             display: block;
             animation: fadeIn 0.4s ease-out;
@@ -384,6 +377,9 @@
             font-weight: 700;
             font-size: 1rem;
             transition: transform 0.2s;
+            border: none;
+            cursor: pointer;
+            font-family: inherit;
         }
 
         .cta-button:hover { transform: scale(1.05); }
@@ -395,7 +391,7 @@
             font-size: 0.85rem;
         }
 
-        /* 9. OPTIMIZACIÓN EXTREMA PARA MÓVIL (Una sola pantalla) */
+        /* 9. OPTIMIZACIÓN EXTREMA PARA MÓVIL */
         @media (max-width: 640px) {
             .container { padding: 24px 16px; }
             
@@ -412,7 +408,6 @@
             
             .score-scale { margin-top: 16px; padding-top: 16px; }
             
-            /* Grid 2x2 para ahorrar altura vertical en móvil */
             .scale-labels {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
@@ -455,7 +450,6 @@
                 <input type="url" id="urlInput" value="https://" placeholder="https://tuweb.com" required>
                 <p class="input-hint">💡 Asegúrate de que la dirección comience con <strong>https://</strong> para un análisis correcto.</p>
                 
-                <!-- Botón circular con ícono de cohete -->
                 <button id="analyzeBtn" class="btn-circle" onclick="analyze()" aria-label="Iniciar Test">
                     <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M13.13 22.19L11.5 18.36C13.07 17.78 14.54 17 15.9 16.09L13.13 22.19M5.64 12.5L1.81 10.87L7.91 8.1C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39C21.61 2.39 16.66 .29 11 5.96C6.5 10.5 5.35 15.5 5.35 15.5L8.5 14.5C8.5 14.5 9.39 11.5 12.5 9.5C14.83 8 17.5 8.5 17.5 8.5L16.5 11.5C16.5 11.5 19.5 12.39 21.61 2.39Z" />
@@ -568,7 +562,7 @@
                 <div class="cta-section">
                     <h2>¿Mejorar tu <span>score</span>?</h2>
                     <p>Estructuramos tu contenido pilar para que Google y las IAs te recomienden, y lo convertimos en contenido visual.</p>
-                    <a href="https://aimratstudio.cl/contacto/" class="cta-button">Solicitar auditoría web</a>
+                    <button onclick="scrollToForm()" class="cta-button">Solicitar auditoría web</button>
                 </div>
             </div>
         </div>
@@ -689,6 +683,23 @@
                 if (!item.pass) li.classList.add('fail');
                 checks.appendChild(li);
             });
+        }
+
+        // NUEVA FUNCIÓN: Scroll suave al formulario de contacto
+        function scrollToForm() {
+            const formContainer = document.getElementById('aim-contact-form');
+            if (formContainer) {
+                formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Efecto visual: borde amarillo pulsante por 2 segundos
+                formContainer.style.transition = 'box-shadow 0.5s ease';
+                formContainer.style.boxShadow = '0 0 0 4px rgba(238, 196, 0, 0.6)';
+                setTimeout(() => {
+                    formContainer.style.boxShadow = 'none';
+                }, 2000);
+            } else {
+                // Fallback: si no encuentra el formulario, abre la página de contacto
+                window.open('https://aimratstudio.cl/contacto/', '_blank');
+            }
         }
 
         document.getElementById('urlInput').addEventListener('keypress', function(e) {
