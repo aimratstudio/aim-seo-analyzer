@@ -2,11 +2,20 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <!-- Sin maximum-scale ni user-scalable=no: bloquear el zoom es un fallo de accesibilidad -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AIM SEO Analyzer | Quick Health Check</title>
+    <meta name="description" content="Test gratuito de 30 segundos: revisa el SEO, el rendimiento técnico y la preparación para IA de tu sitio web. Una herramienta de AIM Agencia de Comunicaciones.">
+    <!-- Confirma que esta sea la URL pública definitiva -->
+    <link rel="canonical" href="https://aimratstudio.cl/analizador-seo/">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="AIM SEO Analyzer | Test SEO y AIO gratis">
+    <meta property="og:description" content="Descubre en 30 segundos cómo está tu web en SEO, rendimiento y preparación para IA.">
+    <meta property="og:url" content="https://aimratstudio.cl/analizador-seo/">
     <style>
         /* 1. RESET Y BASE */
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        [hidden] { display: none !important; }
 
         body {
             font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
@@ -20,6 +29,16 @@
             max-width: 800px;
             margin: 0 auto;
             padding: 40px 20px;
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px; height: 1px;
+            margin: -1px; padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
         }
 
         /* 2. HEADER COMPACTO */
@@ -75,11 +94,22 @@
             box-shadow: 0 0 0 3px rgba(238, 196, 0, 0.15);
         }
 
+        input[type="url"][aria-invalid="true"] { border-color: #e53e3e; }
+
         .input-hint {
             font-size: 0.85rem;
-            color: #718096;
+            color: #5a6676;
             text-align: center;
             margin: 8px 0 16px 0;
+            line-height: 1.4;
+        }
+
+        .input-error {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #c53030;
+            text-align: center;
+            margin: -6px 0 14px;
             line-height: 1.4;
         }
 
@@ -112,6 +142,12 @@
             animation: none;
         }
 
+        .btn-circle:focus-visible,
+        .cta-button:focus-visible {
+            outline: 3px solid #1a202c;
+            outline-offset: 3px;
+        }
+
         .btn-circle svg {
             width: 32px;
             height: 32px;
@@ -134,7 +170,7 @@
 
         .scale-title {
             font-size: 0.85rem;
-            color: #718096;
+            color: #5a6676;
             text-align: center;
             margin-bottom: 12px;
             font-weight: 600;
@@ -151,15 +187,8 @@
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
         }
 
-        .scale-segment {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: #1a202c;
-        }
+        /* Sin texto dentro de la barra: no cabía en 10 px y se veía cortado; los rangos ya están debajo */
+        .scale-segment { flex: 1; }
 
         .segment-critical { background: #fc8181; }
         .segment-needs-work { background: #f6ad55; }
@@ -170,7 +199,7 @@
             display: flex;
             justify-content: space-between;
             font-size: 0.8rem;
-            color: #718096;
+            color: #5a6676;
             gap: 8px;
         }
 
@@ -186,8 +215,8 @@
         }
 
         .label-text {
-            font-size: 0.7rem;
-            line-height: 1.2;
+            font-size: 0.75rem;
+            line-height: 1.25;
         }
 
         /* 6. LOADING */
@@ -198,6 +227,8 @@
         }
 
         .loading.active { display: block; }
+
+        .loading p { color: #5a6676; font-size: 0.95rem; }
 
         .spinner {
             border: 4px solid #e2e8f0;
@@ -216,6 +247,7 @@
 
         /* 7. RESULTADOS */
         .results { display: none; }
+        .results:focus { outline: none; }
         .results.active {
             display: block;
             animation: fadeIn 0.4s ease-out;
@@ -234,7 +266,7 @@
             border-left: 4px solid #EEC400;
         }
 
-        .score-card h3 {
+        .score-card h2 {
             color: #2d3748;
             margin-bottom: 12px;
             font-size: 1.1rem;
@@ -282,6 +314,8 @@
             color: #4a5568;
         }
 
+        .score-label strong { color: #1a202c; }
+
         .metrics {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -298,7 +332,7 @@
 
         .metric-label {
             font-size: 0.75rem;
-            color: #718096;
+            color: #5a6676;
             margin-bottom: 4px;
             line-height: 1.2;
         }
@@ -319,6 +353,7 @@
             font-size: 0.9rem;
             color: #1a202c;
             border-bottom: 1px solid #edf2f7;
+            overflow-wrap: anywhere;
         }
 
         .check-list li:last-child { border-bottom: none; }
@@ -383,6 +418,7 @@
         }
 
         .cta-button:hover { transform: scale(1.05); }
+        .cta-section .cta-button:focus-visible { outline-color: #ffffff; }
 
         footer {
             text-align: center;
@@ -391,79 +427,90 @@
             font-size: 0.85rem;
         }
 
-        /* 9. OPTIMIZACIÓN EXTREMA PARA MÓVIL */
+        /* 9. OPTIMIZACIÓN PARA MÓVIL */
         @media (max-width: 640px) {
             .container { padding: 24px 16px; }
-            
+
             header { margin-bottom: 16px; }
             header h1 { font-size: 1.6rem; }
             header p { font-size: 0.95rem; }
-            
+
             .analyzer-box { padding: 1.25rem; margin-bottom: 16px; }
-            
-            input[type="url"] { padding: 14px 16px; font-size: 15px; }
-            
+
+            /* 16 px: por debajo de eso iOS hace zoom al tocar el campo */
+            input[type="url"] { padding: 14px 16px; font-size: 16px; }
+
             .btn-circle { width: 64px; height: 64px; }
             .btn-circle svg { width: 28px; height: 28px; }
-            
+
             .score-scale { margin-top: 16px; padding-top: 16px; }
-            
+
             .scale-labels {
                 display: grid;
                 grid-template-columns: 1fr 1fr;
                 gap: 12px 8px;
                 text-align: left;
             }
-            
+
             .label-item {
                 display: flex;
                 align-items: center;
                 gap: 8px;
                 text-align: left;
             }
-            
+
             .label-value { margin-bottom: 0; min-width: 45px; }
-            
+
             .score-display { gap: 12px; }
             .score-circle { width: 60px; height: 60px; }
             .score-circle::before { width: 48px; height: 48px; }
             .score-value { font-size: 1.2rem; }
-            
+
             .metrics { grid-template-columns: 1fr; gap: 8px; }
             .metric { display: flex; justify-content: space-between; padding: 10px 14px; text-align: left; }
             .metric-label { margin-bottom: 0; }
-            
+
             .cta-section { padding: 24px 16px; }
             .cta-section h2 { font-size: 1.2rem; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            .btn-circle { animation: none; }
+            .results.active { animation: none; }
+            .btn-circle, .cta-button { transition: none; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>🚀 AIM <span>SEO Analyzer</span></h1>
+            <h1><span aria-hidden="true" style="color:inherit">🚀</span> AIM <span>SEO Analyzer</span></h1>
             <p>Haz un test de 30 segundos para saber qué tan bien rankeada está tu web en Google</p>
         </header>
 
-        <div class="analyzer-box">
-            <div class="input-group">
-                <input type="url" id="urlInput" value="https://" placeholder="https://tuweb.com" required>
-                <p class="input-hint">💡 Asegúrate de que la dirección comience con <strong>https://</strong> para un análisis correcto.</p>
-                
-                <button id="analyzeBtn" class="btn-circle" onclick="analyze()" aria-label="Iniciar Test">
-                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <main class="analyzer-box">
+            <form class="input-group" id="analyzerForm" novalidate>
+                <label for="urlInput" class="sr-only">Dirección de tu sitio web</label>
+                <input type="url" id="urlInput" name="url" value="https://" placeholder="https://tuweb.com"
+                       inputmode="url" autocomplete="url" autocapitalize="off" spellcheck="false"
+                       aria-describedby="urlHint urlError" required>
+                <p class="input-hint" id="urlHint">💡 Asegúrate de que la dirección comience con <strong>https://</strong> para un análisis correcto.</p>
+                <p class="input-error" id="urlError" role="alert" hidden></p>
+
+                <button id="analyzeBtn" class="btn-circle" type="submit" aria-label="Iniciar test">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
                         <path d="M13.13 22.19L11.5 18.36C13.07 17.78 14.54 17 15.9 16.09L13.13 22.19M5.64 12.5L1.81 10.87L7.91 8.1C7 9.46 6.22 10.93 5.64 12.5M21.61 2.39C21.61 2.39 16.66 .29 11 5.96C6.5 10.5 5.35 15.5 5.35 15.5L8.5 14.5C8.5 14.5 9.39 11.5 12.5 9.5C14.83 8 17.5 8.5 17.5 8.5L16.5 11.5C16.5 11.5 19.5 12.39 21.61 2.39Z" />
                     </svg>
                 </button>
-            </div>
+            </form>
 
             <div class="score-scale">
                 <div class="scale-title">¿Qué significa tu puntuación?</div>
-                <div class="scale-bar">
-                    <div class="scale-segment segment-critical">0-50</div>
-                    <div class="scale-segment segment-needs-work">50-70</div>
-                    <div class="scale-segment segment-good">70-90</div>
-                    <div class="scale-segment segment-excellent">90-100</div>
+                <div class="scale-bar" aria-hidden="true">
+                    <div class="scale-segment segment-critical"></div>
+                    <div class="scale-segment segment-needs-work"></div>
+                    <div class="scale-segment segment-good"></div>
+                    <div class="scale-segment segment-excellent"></div>
                 </div>
                 <div class="scale-labels">
                     <div class="label-item">
@@ -485,33 +532,33 @@
                 </div>
             </div>
 
-            <div class="loading" id="loading">
-                <div class="spinner"></div>
-                <p style="color: #718096; font-size: 0.95rem;">Analizando tu sitio...</p>
+            <div class="loading" id="loading" role="status" aria-live="polite">
+                <div class="spinner" aria-hidden="true"></div>
+                <p>Analizando tu sitio...</p>
             </div>
 
-            <div class="results" id="results">
+            <div class="results" id="results" tabindex="-1">
                 <div class="score-card">
-                    <h3>📊 Score Total AIM</h3>
+                    <h2>📊 Score Total AIM</h2>
                     <div class="score-display">
                         <div class="score-circle" id="totalScoreCircle">
                             <div class="score-value" id="totalScore">0</div>
                         </div>
                         <div class="score-label">
-                            <strong style="color: #1a202c;">Salud general</strong><br>
+                            <strong>Salud general</strong><br>
                             <span id="totalScoreText">Calculando...</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="score-card">
-                    <h3>⚡ Rendimiento Técnico</h3>
+                    <h2>⚡ Rendimiento Técnico</h2>
                     <div class="score-display">
                         <div class="score-circle" id="techScoreCircle">
                             <div class="score-value" id="techScore">0</div>
                         </div>
                         <div class="score-label">
-                            <strong style="color: #1a202c;">Core Web Vitals</strong><br>
+                            <strong>Core Web Vitals</strong><br>
                             <span id="techScoreText">Analizando...</span>
                         </div>
                     </div>
@@ -532,13 +579,13 @@
                 </div>
 
                 <div class="score-card">
-                    <h3>🔍 SEO Básico</h3>
+                    <h2>🔍 SEO Básico</h2>
                     <div class="score-display">
                         <div class="score-circle" id="seoScoreCircle">
                             <div class="score-value" id="seoScore">0</div>
                         </div>
                         <div class="score-label">
-                            <strong style="color: #1a202c;">Fundamentos</strong><br>
+                            <strong>Fundamentos</strong><br>
                             <span id="seoScoreText">Revisando...</span>
                         </div>
                     </div>
@@ -546,13 +593,13 @@
                 </div>
 
                 <div class="score-card">
-                    <h3>🤖 Preparación IA (AIO)</h3>
+                    <h2>🤖 Preparación IA (AIO)</h2>
                     <div class="score-display">
                         <div class="score-circle" id="aioScoreCircle">
                             <div class="score-value" id="aioScore">0</div>
                         </div>
                         <div class="score-label">
-                            <strong style="color: #1a202c;">Citado por IAs</strong><br>
+                            <strong>Citado por IAs</strong><br>
                             <span id="aioScoreText">Evaluando...</span>
                         </div>
                     </div>
@@ -562,10 +609,10 @@
                 <div class="cta-section">
                     <h2>¿Mejorar tu <span>score</span>?</h2>
                     <p>Estructuramos tu contenido pilar para que Google y las IAs te recomienden, y lo convertimos en contenido visual.</p>
-                    <button onclick="scrollToForm()" class="cta-button">Solicitar auditoría web</button>
+                    <button type="button" id="ctaBtn" class="cta-button">Solicitar auditoría web</button>
                 </div>
             </div>
-        </div>
+        </main>
 
         <footer>
             <p>© 2026 AIM Agencia de Comunicaciones SpA | Concepción, Chile</p>
@@ -573,138 +620,206 @@
     </div>
 
     <script>
-        async function analyze() {
-            let url = document.getElementById('urlInput').value.trim();
-            
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+    (function () {
+        'use strict';
+
+        var $ = function (id) { return document.getElementById(id); };
+        var form = $('analyzerForm');
+        var input = $('urlInput');
+        var btn = $('analyzeBtn');
+        var loading = $('loading');
+        var results = $('results');
+        var errorBox = $('urlError');
+        var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var REQUEST_TIMEOUT_MS = 60000;
+
+        /* ---------- Errores en pantalla (en lugar de alert) ---------- */
+        function showError(msg) {
+            errorBox.textContent = msg;
+            errorBox.hidden = false;
+            input.setAttribute('aria-invalid', 'true');
+        }
+        function clearError() {
+            errorBox.hidden = true;
+            errorBox.textContent = '';
+            input.removeAttribute('aria-invalid');
+        }
+
+        /* ---------- Validación de la URL ---------- */
+        function normalizeUrl(raw) {
+            var url = (raw || '').trim();
+
+            if (url === '' || url === 'https://' || url === 'http://') {
+                showError('Por favor ingresa tu dominio después de https://');
+                return null;
+            }
+            if (!/^https?:\/\//i.test(url)) {
                 url = 'https://' + url;
-                document.getElementById('urlInput').value = url;
             }
-            
-            if (url === 'https://' || url === 'http://') {
-                alert('Por favor ingresa tu dominio después de https://');
-                return;
-            }
-            
             try {
-                new URL(url);
+                var parsed = new URL(url);
+                if (parsed.hostname.indexOf('.') === -1) throw new Error('host');
             } catch (e) {
-                alert('La URL no es válida. Ejemplo: https://tuweb.com');
-                return;
+                showError('La URL no es válida. Ejemplo: https://tuweb.com');
+                return null;
             }
+            return url;
+        }
 
-            const btn = document.getElementById('analyzeBtn');
-            const loading = document.getElementById('loading');
-            const results = document.getElementById('results');
+        /* ---------- Análisis ---------- */
+        function setBusy(busy) {
+            btn.disabled = busy;
+            form.setAttribute('aria-busy', busy ? 'true' : 'false');
+            loading.classList.toggle('active', busy);
+        }
 
-            btn.disabled = true;
-            loading.classList.add('active');
+        async function analyze() {
+            clearError();
+            var url = normalizeUrl(input.value);
+            if (!url) { input.focus(); return; }
+            input.value = url;
+
+            setBusy(true);
             results.classList.remove('active');
 
+            var controller = new AbortController();
+            var timer = setTimeout(function () { controller.abort(); }, REQUEST_TIMEOUT_MS);
+
             try {
-                const response = await fetch(`/analyze?url=${encodeURIComponent(url)}`);
-                const data = await response.json();
-                if (data.error) { throw new Error(data.error); }
+                var response = await fetch('/analyze?url=' + encodeURIComponent(url), { signal: controller.signal });
+                var data;
+                try {
+                    data = await response.json();
+                } catch (e) {
+                    throw new Error('El servidor devolvió una respuesta inesperada.');
+                }
+                if (!response.ok || data.error) {
+                    throw new Error(data.error || ('No se pudo completar el análisis (error ' + response.status + ').'));
+                }
                 displayResults(data);
             } catch (error) {
-                alert('Error al analizar: ' + error.message);
+                if (error.name === 'AbortError') {
+                    showError('El análisis tardó demasiado. Inténtalo nuevamente en unos minutos.');
+                } else {
+                    showError('Error al analizar: ' + error.message);
+                }
             } finally {
-                btn.disabled = false;
-                loading.classList.remove('active');
+                clearTimeout(timer);
+                setBusy(false);
             }
         }
 
-        function displayResults(data) {
-            const results = document.getElementById('results');
-            results.classList.add('active');
-            
-            updateScore('totalScore', 'totalScoreCircle', data.scores.total);
-            document.getElementById('totalScoreText').textContent = getScoreText(data.scores.total);
-            
-            updateScore('techScore', 'techScoreCircle', data.scores.technical);
-            document.getElementById('techScoreText').textContent = getScoreText(data.scores.technical);
-            document.getElementById('fcp').textContent = data.pagespeed.fcp;
-            document.getElementById('lcp').textContent = data.pagespeed.lcp;
-            document.getElementById('cls').textContent = data.pagespeed.cls;
-            
-            updateScore('seoScore', 'seoScoreCircle', data.scores.seo);
-            document.getElementById('seoScoreText').textContent = getScoreText(data.scores.seo);
-            displaySeoChecks(data.seo);
-            
-            updateScore('aioScore', 'aioScoreCircle', data.scores.aio);
-            document.getElementById('aioScoreText').textContent = getScoreText(data.scores.aio);
-            displayAioChecks(data.seo);
-            
-            results.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        /* ---------- Resultados ---------- */
+        function toScore(value) {
+            var n = Number(value);
+            return isFinite(n) ? Math.max(0, Math.min(100, Math.round(n))) : 0;
         }
 
-        function updateScore(valueId, circleId, score) {
-            document.getElementById(valueId).textContent = score;
-            document.getElementById(circleId).style.setProperty('--score', `${score * 3.6}deg`);
-        }
-
+        // Mismos rangos que la escala que se muestra arriba (0-50 / 50-70 / 70-90 / 90-100)
         function getScoreText(score) {
-            if (score >= 80) return '¡Excelente!';
-            if (score >= 60) return 'Bueno, pero mejorable';
-            if (score >= 40) return 'Necesita trabajo';
+            if (score >= 90) return '¡Excelente!';
+            if (score >= 70) return 'Bien, buen ranking';
+            if (score >= 50) return 'Necesita trabajo';
             return 'Requiere atención urgente';
         }
 
-        function displaySeoChecks(seo) {
-            const checks = document.getElementById('seoChecks');
-            checks.innerHTML = '';
-            const items = [
-                { label: `Title: ${seo.title || 'No detectado'}`, pass: !!seo.title },
-                { label: `Meta Description: ${seo.metaDescription ? 'Presente' : 'Falta'}`, pass: !!seo.metaDescription },
-                { label: `H1 único: ${seo.h1Count === 1 ? 'Sí' : 'No'}`, pass: seo.h1Count === 1 },
-                { label: `Open Graph: ${seo.hasOpenGraph ? 'Configurado' : 'Falta'}`, pass: seo.hasOpenGraph },
-                { label: `Imágenes sin alt: ${seo.imagesWithoutAlt === 0 ? '0' : seo.imagesWithoutAlt}`, pass: seo.imagesWithoutAlt === 0 }
-            ];
-            items.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = item.label;
+        function updateScore(valueId, circleId, textId, rawScore) {
+            var score = toScore(rawScore);
+            $(valueId).textContent = score;
+            $(circleId).style.setProperty('--score', (score * 3.6) + 'deg');
+            $(textId).textContent = getScoreText(score);
+        }
+
+        function metricText(value) {
+            return (value === undefined || value === null || value === '') ? '-' : value;
+        }
+
+        function renderChecks(listId, items) {
+            var list = $(listId);
+            list.innerHTML = '';
+            items.forEach(function (item) {
+                var li = document.createElement('li');
+                li.textContent = item.label;      // textContent: el contenido de terceros nunca se interpreta como HTML
                 if (!item.pass) li.classList.add('fail');
-                checks.appendChild(li);
+                list.appendChild(li);
             });
+        }
+
+        function displaySeoChecks(seo) {
+            renderChecks('seoChecks', [
+                { label: 'Title: ' + (seo.title || 'No detectado'), pass: !!seo.title },
+                { label: 'Meta Description: ' + (seo.metaDescription ? 'Presente' : 'Falta'), pass: !!seo.metaDescription },
+                { label: 'H1 único: ' + (seo.h1Count === 1 ? 'Sí' : 'No'), pass: seo.h1Count === 1 },
+                { label: 'Open Graph: ' + (seo.hasOpenGraph ? 'Configurado' : 'Falta'), pass: !!seo.hasOpenGraph },
+                { label: 'Imágenes sin alt: ' + (seo.imagesWithoutAlt || 0), pass: !seo.imagesWithoutAlt }
+            ]);
         }
 
         function displayAioChecks(seo) {
-            const checks = document.getElementById('aioChecks');
-            checks.innerHTML = '';
-            const items = [
-                { label: `Schema Markup: ${seo.hasSchema ? 'Presente' : 'Falta'}`, pass: seo.hasSchema },
-                { label: `Blog/Noticias: ${seo.hasBlog ? 'Activo' : 'No detectado'}`, pass: seo.hasBlog },
-                { label: `FAQ: ${seo.hasFAQ ? 'Presente' : 'Falta'}`, pass: seo.hasFAQ },
-                { label: `Estructura H2: ${seo.h2Count >= 3 ? 'Buena' : 'Insuficiente'}`, pass: seo.h2Count >= 3 }
-            ];
-            items.forEach(item => {
-                const li = document.createElement('li');
-                li.textContent = item.label;
-                if (!item.pass) li.classList.add('fail');
-                checks.appendChild(li);
-            });
+            renderChecks('aioChecks', [
+                { label: 'Schema Markup: ' + (seo.hasSchema ? 'Presente' : 'Falta'), pass: !!seo.hasSchema },
+                { label: 'Blog/Noticias: ' + (seo.hasBlog ? 'Activo' : 'No detectado'), pass: !!seo.hasBlog },
+                { label: 'FAQ: ' + (seo.hasFAQ ? 'Presente' : 'Falta'), pass: !!seo.hasFAQ },
+                { label: 'Estructura H2: ' + (seo.h2Count >= 3 ? 'Buena' : 'Insuficiente'), pass: seo.h2Count >= 3 }
+            ]);
         }
 
-        // NUEVA FUNCIÓN: Scroll suave al formulario de contacto
+        function displayResults(data) {
+            var scores = (data && data.scores) || {};
+            var pagespeed = (data && data.pagespeed) || {};
+            var seo = (data && data.seo) || {};
+
+            results.classList.add('active');
+
+            updateScore('totalScore', 'totalScoreCircle', 'totalScoreText', scores.total);
+            updateScore('techScore', 'techScoreCircle', 'techScoreText', scores.technical);
+            $('fcp').textContent = metricText(pagespeed.fcp);
+            $('lcp').textContent = metricText(pagespeed.lcp);
+            $('cls').textContent = metricText(pagespeed.cls);
+
+            updateScore('seoScore', 'seoScoreCircle', 'seoScoreText', scores.seo);
+            displaySeoChecks(seo);
+
+            updateScore('aioScore', 'aioScoreCircle', 'aioScoreText', scores.aio);
+            displayAioChecks(seo);
+
+            results.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+            results.focus({ preventScroll: true });
+            notifyParentHeight();
+        }
+
+        /* ---------- Llamado a la acción ---------- */
         function scrollToForm() {
-            const formContainer = document.getElementById('aim-contact-form');
+            var formContainer = document.getElementById('aim-contact-form');
             if (formContainer) {
-                formContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                // Efecto visual: borde amarillo pulsante por 2 segundos
+                formContainer.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
                 formContainer.style.transition = 'box-shadow 0.5s ease';
                 formContainer.style.boxShadow = '0 0 0 4px rgba(238, 196, 0, 0.6)';
-                setTimeout(() => {
-                    formContainer.style.boxShadow = 'none';
-                }, 2000);
+                setTimeout(function () { formContainer.style.boxShadow = 'none'; }, 2000);
             } else {
-                // Fallback: si no encuentra el formulario, abre la página de contacto
-                window.open('https://aimratstudio.cl/contacto/', '_blank');
+                // Si el formulario no está en esta página (por ejemplo, dentro de un iframe), abre la página de contacto
+                window.open('https://aimratstudio.cl/contacto/', '_blank', 'noopener');
             }
         }
 
-        document.getElementById('urlInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') analyze();
+        /* ---------- Si la app va dentro de un iframe, avisa su alto a la página que la contiene ---------- */
+        function notifyParentHeight() {
+            if (window.parent === window) return;
+            window.parent.postMessage({
+                type: 'aim-analyzer-height',
+                height: document.documentElement.scrollHeight
+            }, '*');
+        }
+
+        /* ---------- Eventos ---------- */
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+            analyze();
         });
+        input.addEventListener('input', clearError);
+        $('ctaBtn').addEventListener('click', scrollToForm);
+        window.addEventListener('load', notifyParentHeight);
+    })();
     </script>
 </body>
 </html>
